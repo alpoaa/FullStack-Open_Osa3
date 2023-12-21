@@ -1,28 +1,32 @@
 const express = require('express')
 const app     = express()
 
+app.use(express.json())
+
 let persons = [
     {
         id: 1,
-        content: "Arto Hellas",
+        name: "Arto Hellas",
         number: "040-123456"
     },
     {
         id: 2,
-        content: "Ada Lovelace",
+        name: "Ada Lovelace",
         number: "39-44-5343532"
     },
     {
         id: 3,
-        content: "Dan Abramov",
+        name: "Dan Abramov",
         number: "12-34-234345"
     },
     {
         id: 4,
-        content: "Mary Poppendick",
+        name: "Mary Poppendick",
         number: "39-23-6423122"
     }
 ]
+
+const generateNewPersonId = () => Math.floor(Math.random() * 1000)
 
 app.get('/', (request, response) => {
     response.send('<h4>Osa3<h4>')
@@ -49,6 +53,25 @@ app.get('/api/persons/:id', (request, response) => {
     } else {
         response.status(404).end()
     }
+})
+
+app.post('/api/persons', (request, response) => {
+    const requestBody = request.body
+    console.log(requestBody)
+
+    if (!requestBody) {
+        return response.status(400).json({error: 'invalid request'})
+    }
+
+    const newPerson = {
+        name: requestBody.name,
+        number: requestBody.number,
+        id : generateNewPersonId()
+    }
+
+    persons = persons.concat(newPerson)
+
+    response.json(newPerson)
 })
 
 app.delete('/api/persons/:id', (request, response) => {
