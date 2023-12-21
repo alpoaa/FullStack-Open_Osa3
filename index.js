@@ -57,11 +57,21 @@ app.get('/api/persons/:id', (request, response) => {
 
 app.post('/api/persons', (request, response) => {
     const requestBody = request.body
-    console.log(requestBody)
 
     if (!requestBody) {
-        return response.status(400).json({error: 'invalid request'})
+        return response.status(400).json({error: 'no request body'})
     }
+
+    if (!requestBody.name || !requestBody.number) {
+        return response.status(400).json({error: 'missing name or number'})
+    }
+
+    const personExists = persons.find(person => person.name === requestBody.name)
+
+    if (personExists) {
+        return response.status(400).json({error: 'number already exists'})
+    }
+  
 
     const newPerson = {
         name: requestBody.name,
